@@ -27,24 +27,28 @@ async def verify_file(loaded_file, file_name):
 async def zip2csv(archived_files, root_dir=STORE_DIR, result=RESULT_DIR):
     for archive_name in archived_files:
         archived = path.join(root_dir, archive_name)
-        with zipfile.ZipFile(archived, mode='r') as container:
-            file_names = container.namelist()
-            if len(file_names) != COUNT_XML_IN_ZIP:
-                message = f'Wrong files count in {archive_name}, {COUNT_XML_IN_ZIP} expected.'
-                logging.error(message)
-                # support for wrong files count in the zip is not expected, raise
-                raise ValidationError(message, code='invalid_files_count')
-            await write_file_ids(file_names, result)
-            for file_name in file_names:
-                loaded_file = open(container.extract(file_name, path=STORE_DIR), mode='r+')
-                try:
-                    await verify_file(loaded_file, file_name)
-                    await write_csv(loaded_file, result)
-                except ValidationError:
-                    # can parse for other available xmls in the zip, so continue
-                    continue
-                finally:
-                    remove(path.join(STORE_DIR, file_name))
+        try:
+            with zipfile.ZipFile(archived, mode='r') as container:
+                file_names = container.namelist()
+                if len(file_names) != COUNT_XML_IN_ZIP:
+                    message = f'Wrong files count in {archive_name}, {COUNT_XML_IN_ZIP} expected.'
+                    logging.error(message)
+                    # support for wrong files count in the zip is not expected, raise
+                    raise ValidationError(message, code='invalid_files_count')
+                await write_file_ids(file_names, result)
+                for file_name in file_names:
+                    loaded_file = open(container.extract(file_name, path=STORE_DIR), mode='r+')
+                    try:
+                        await verify_file(loaded_file, file_name)
+                        await write_csv(loaded_file, result)
+                    except ValidationError:
+                        # can parse for other available xmls in the zip, so continue
+                        continue
+                    finally:
+                        remove(path.join(STORE_DIR, file_name))
+        except zipfile.BadZipFile:
+            logging.warning('BadZipFile in store directory')
+            continue
     return
 
 
