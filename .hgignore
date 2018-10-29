@@ -1,0 +1,27 @@
+syntax: glob
+*.log
+*.pyc
+*.orig
+.project
+.pydevproject
+.settings/
+.idea/
+*_local
+*statics
+media/
+digital-signature/
+venv
+local.py
+*_local.py
+*.mo
+static_collected
+frontend/ums/node_modules/*
+frontend/ums/.git/*
+frontend/ums/tmp/*
+frontend/ums/bower_components/*
+media_test/_distrib/*
+.coverage
+cover
+nosetests.xml
+coverage.xml
+.vagrant

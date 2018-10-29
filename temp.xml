@@ -1,0 +1,4 @@
+<root>
+<var name='id' value='unique_random_str'/>
+<var name='level' value='random_1_100'/>
+<objects>
