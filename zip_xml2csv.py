@@ -71,6 +71,8 @@ if __name__ == '__main__':
         logging.info(f"zip2csv started at {datetime.now()}")
         for root, dirs, files in walk(STORE_DIR):
             loop.run_until_complete(zip2csv(files, root))
+    except Exception as e:
+        logging.error(f"error {e}")
     finally:
         for root, dirs, files in walk(path.join(ROOT_DIR, 'tmp')):
             for name in files:
